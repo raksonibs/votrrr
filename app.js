@@ -1,4 +1,17 @@
-var app = angular.module('votrrr', []);
+var app = angular.module('votrrr', ['ui.router']);
+
+app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
+  $stateProvider
+    .state('home', {
+      url: '/home',
+      templateUrl: '/home.html',
+      controller: 'MainCtrl'
+    })
+
+  $urlRouterProvider.otherwise('home')
+
+  // $locationProvider.html5Mode(true)
+}])
 
 app.factory('votes', function() {
   var votes = {

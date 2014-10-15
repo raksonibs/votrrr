@@ -1,0 +1,11 @@
+.col-centered {
+  float:none;
+  margin: 0 auto;
+  height: 100%;
+}
+
+.text-centered {
+  text-align: center;
+  top: 100px;
+  position: relative;
+}
