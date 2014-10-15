@@ -1,12 +1,39 @@
 var app = angular.module('votrrr', []);
-app.controller('MainCtrl', ['$scope', function($scope) {
-  $scope.test = 'Hello world!';
 
-  //vote has title, creator, opetions, and each option has votes, and title
+app.factory('votes', function() {
+  var votes = {
+    votes: [//{title: 'Which sport?', 
+    //         options: [{option_title:'Squash', points: 10},
+    //                   {option_title:'baseball', points: 0},
+    //                   {option_title:'Basketball', points: 1}
+    //                   ]
+    //                 },
+    //         {title: 'Lunch Where?', 
+    //         options: [{option_title:'Here', points: 1},
+    //                   {option_title:'Burger King', points: 0},
+    //                   {option_title:'East Side', points: 3},
+    //                   {option_title:'West Side', points: 0},
+    //                   {option_title:'Hearties', points: 2}
+    //                   ]
+    //                 }
+            ]
+  }
 
-  // test file multiple vote topics with multiple options
+  return votes
+})
 
-  $scope.vote = {title: 'Lunch Where?', options: [{option_title:'Here', points: 1},{option_title:'Burger King', points: 0},{option_title:'East Side', points: 3},{option_title:'West Side', points: 0},{option_title:'Hearties', points: 2}]}
+app.factory('options', function() {
+  var o = {
+    options: []
+  }
+
+  return o
+  //how to associate the two?return
+})
+
+app.controller('MainCtrl', ['votes','$scope', function(votes,$scope) {
+  $scope.votes = votes.votes
+  $scope.options = []
 
   $scope.addVote = function() {
     if ( $scope.title === '' ) {
@@ -15,13 +42,53 @@ app.controller('MainCtrl', ['$scope', function($scope) {
 
     $scope.votes.push({
       title: $scope.title,
-      options: $scope.options //have to worry about mutliple numbers
-
+      options: $scope.options//have to worry about mutliple numbers
     })
+
+    $scope.title = ""
+    $scope.options = []
   }
 
-  $scope.addOption = function() {
-    $scope.vote.options.push({
+  $scope.addOptionForm = function() {
+
+    console.log($scope.options)
+
+    $scope.options.push({
+      option_title: $scope.option_title,
+      points: 0
+    })
+
+    $scope.option_title = ""
+
+    // var findVote = false
+    // var thisVote = null;
+    // var lenVotes = $scope.votes.length
+    // console.log('hi')
+
+    // for (var i = 0; i < lenVotes; i++) {
+    //   if (votes[i].title == title) { 
+    //     findVote = true
+    //     thisVote = votes[i]
+    //   }
+    // }
+
+    // if ( findVote ) {
+    //   $scope.thisVote.options.push({
+    //     title: $scope.option_title,
+    //     points: 0
+    //   })
+    //   $scope.option_title = '';
+    //   $scope.points= 0;
+    // } else {
+    //   $scope.temp_votes.push({
+    //     title: $scope.title,
+    //     options: $scope.options//have to worry about mutliple numbers
+    //   })
+    // }
+  }
+
+  $scope.addOption = function(vote) {
+    $scope.votes.vote.options.push({
       option_title: $scope.option_title,
       points: 0
     })
