@@ -4,19 +4,25 @@
   <meta charset="UTF-8">
   <title>Votrrr</title>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
+  <link rel='stylesheet' href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <!-- <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script> -->
   <script src="app.js"></script>
 </head>
 <body ng-app="votrrr" ng-controller='MainCtrl'>
-  <div ng-repeat="option in vote.options | orderBy: '-points'">
-    {{option.option_title}}: {{option.points}}
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <div ng-repeat="option in vote.options | orderBy: '-points'">
+        {{option.option_title}}: {{option.points}}
 
-    <!-- if owner of vote need to have add option or edit or delete -->
-    <button ng-click="upvote(option)">Upvote</button>
+        <!-- if owner of vote need to have add option or edit or delete -->
+        <button ng-click="upvote(option)">Upvote</button>
+      </div>
+      <form ng-submit="addOption()">
+        <input type="text" ng-model="option_title">{{option_title}}
+        <button type="submit">Add it</button>
+      </form>
+    </div>
   </div>
-  <form ng-submit="addOption()">
-    <input type="text" ng-model="option_title">{{option_title}}</input>
-    <button type="submit">Add it</button>
-  </form>
     
 </body>
 </html>
