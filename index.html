@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Votrrr</title>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
+  <script src="app.js"></script>
+</head>
+<body ng-app="votrrr" ng-controller='MainCtrl'>
+  <div ng-repeat="option in vote.options | orderBy: '-points'">
+    {{option.option_title}}: {{option.points}}
+
+    <!-- if owner of vote need to have add option or edit or delete -->
+    <button ng-click="upvote(option)">Upvote</button>
+  </div>
+  <form ng-submit="addOption()">
+    <input type="text" ng-model="option_title">{{option_title}}</input>
+    <button type="submit">Add it</button>
+  </form>
+    
+</body>
+</html>
