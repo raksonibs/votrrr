@@ -6,11 +6,11 @@
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.js"></script>
   <link rel='stylesheet' href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/stylesheets/style.css">
+  <link rel="stylesheet" href="style.css">
   <!-- <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script> -->
-  <script src="/javascripts/angularApp.js"></script>
+  <script src="app.js"></script>
 </head>
-<body ng-app="votrrr" ng-controller='MainCtrl'>
+<body ng-app="votrrr" ng-controller='VotesCtrl'>
   <div class="col-centered row">
     <div class="text-centered">
       <ui-view></ui-view>
@@ -24,12 +24,18 @@
     </div>
   </div>
 
-  <script type="text/ng-template" id="/home.html">
-      <div>
-        <button ng-click="go('/votes')">Votes</button>
-        <button ng-click="go('/new_vote')">New Vote</button>
+
+  <script type="text/ng-template" id="/votes.html">
+
+    <div ng-repeat="vote in votes">
+      <h3> {{vote.title}}</h3>
+      <div ng-repeat="option in vote.options | orderBy: '-points'">
+        {{option.option_title}}: {{option.points}}
+
+        <!-- if owner of vote need to have add option or edit or delete -->
+        <button ng-click="upvote(option)">Upvote</button>
       </div>
-  
+    </div>
   </script>
 
 </body>
