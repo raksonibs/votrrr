@@ -19,12 +19,32 @@ router.param('vote', function(req,res,next,title) {
   })
 })
 
+router.param('selection', function(req,res,next,option_title) {
+  var query = Selection.find({title: title})
+  // }
+
+  query.exec(function(err,selection) {
+    if (err) { return next(err) }
+    if (!selection) { return next(new Error("No selection by that id"))}
+
+    req.selection = selection 
+    return next()
+  })
+})
+
 router.get('/votes/:vote', function(req,res) {
   res.json(req.vote)
 })
 
+router.post('/votes/:vote/selections/:selection', function(req,res, next) {
+  req.selection.upvote( function(err,selection) {
+    if (err) { return next(err) }
+    res.json(selection)
+  })
+})
+
 /* GET home page. */
-router.get('/votes', function(req, res) {
+router.get('/votes', function(req, res, next) {
   Vote.find(function(err, votes) {
     if (err) { return next(err) }
     res.json(votes)
@@ -34,7 +54,7 @@ router.get('/votes', function(req, res) {
 //curl --data 'title=test' http://localhost:3000/votes
 
 
-router.post('/votes', function(req,res) {
+router.post('/votes', function(req,res, next) {
   var vote = new Vote(req.body)
   vote.save(function(err,vote) {
     if (err) { return next(err) }
