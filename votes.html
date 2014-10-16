@@ -10,7 +10,7 @@
   <!-- <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script> -->
   <script src="app.js"></script>
 </head>
-<body ng-app="votrrr" ng-controller='MainCtrl'>
+<body ng-app="votrrr" ng-controller='VotesCtrl'>
   <div class="col-centered row">
     <div class="text-centered">
       <ui-view></ui-view>
@@ -24,23 +24,6 @@
     </div>
   </div>
 
-  <script type="text/ng-template" id="/new_vote.html">
-
-    <form name= "voteForm">
-        Vote Title:<input type="text" ng-model="title">{{title}}
-        <br>
-        <div ng-repeat="option in options">
-          {{option.option_title}}: {{option.points}}
-        </div>
-        <form ng-model="options" ng-submit="$event.preventDefault()">
-          Add Option:<input type="text" ng-model="option_title">{{option_title}}
-          <button ng-click="addOptionForm()" type="click">Add Option</button>
-        </form>
-        <br>
-        <button ng-click="addVote()" type="submit">Add Vote</button>
-      </form>
-
-  </script>
 
   <script type="text/ng-template" id="/votes.html">
 
@@ -53,14 +36,6 @@
         <button ng-click="upvote(option)">Upvote</button>
       </div>
     </div>
-  </script>
-
-  <script type="text/ng-template" id="/home.html">
-      <div>
-        <button ng-click="go('/votes')">Votes</button>
-        <button ng-click="go('/new_vote')">New Vote</button>
-      </div>
-  
   </script>
 
 </body>

@@ -7,6 +7,21 @@ app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functio
       templateUrl: '/home.html',
       controller: 'MainCtrl'
     })
+    .state('vote', {
+      url: '/voting/{title}',
+      templateUrl: '/vote.html',
+      controller: 'VoteCtrl'
+    })
+    .state('votes', {
+      url: '/votes',
+      templateUrl: '/votes.html',
+      controller: 'VotesCtrl'
+    })
+    .state('new_vote', {
+      url: '/new_vote',
+      templateUrl: '/new_vote.html',
+      controller: 'NewVoteCtrl'
+    })
 
   $urlRouterProvider.otherwise('home')
 
@@ -44,7 +59,19 @@ app.factory('options', function() {
   //how to associate the two?return
 })
 
-app.controller('MainCtrl', ['votes','$scope', function(votes,$scope) {
+app.controller('VoteCtrl', ['votes', '$scope', '$stateParams', function(votes, $scope, $stateParams) {
+  $scope.vote = votes.votes[$stateParams.title]
+}])
+
+app.controller('VotesCtrl', ['votes', '$scope', function(votes, $scope) {
+  $scope.votes = votes.votes
+
+  $scope.upvote = function(option) {
+    option.points += 1;
+  }
+}])
+
+app.controller('NewVoteCtrl', ['votes', '$scope', function(votes, $scope) {
   $scope.votes = votes.votes
   $scope.options = []
 
@@ -73,18 +100,13 @@ app.controller('MainCtrl', ['votes','$scope', function(votes,$scope) {
 
     $scope.option_title = ""
   }
+  
+}])
 
-  $scope.addOption = function(vote) {
-    $scope.votes.vote.options.push({
-      option_title: $scope.option_title,
-      points: 0
-    })
+app.controller('MainCtrl', ['votes','$scope', '$location', function(votes,$scope, $location) {
 
-    $scope.option_title = '';
-    $scope.points= 0;
+  $scope.go = function( path ) {
+    $location.path( path )
   }
 
-  $scope.upvote = function(option) {
-    option.points += 1;
-  }
 }]);
