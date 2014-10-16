@@ -8,7 +8,7 @@ var mongoose = require('mongoose')
 
 mongoose.connect('mongodb://localhost/votes')
 require('./models/Votes')
-require('./models/Options')
+require('./models/Selections')
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
