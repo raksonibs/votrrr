@@ -20,7 +20,7 @@ router.param('vote', function(req,res,next,title) {
 })
 
 router.param('selection', function(req,res,next,option_title) {
-  var query = Selection.find({title: title})
+  var query = Selection.find({option_title: option_title})
   // }
 
   query.exec(function(err,selection) {
@@ -33,7 +33,10 @@ router.param('selection', function(req,res,next,option_title) {
 })
 
 router.get('/votes/:vote', function(req,res) {
-  res.json(req.vote)
+  // need to retrieve selections to vote
+  req.vote.populate('selections', function(err, vote) {
+    res.json(req.vote)
+  })  
 })
 
 router.post('/votes/:vote/selections/:selection', function(req,res, next) {
@@ -50,6 +53,24 @@ router.get('/votes', function(req, res, next) {
     res.json(votes)
   })
 });
+
+router.post('/votes/:vote/selections', function(req,res,next) {
+  var selection = new Selection(req.body)
+
+  selection.vote = req.vote 
+
+  selection.save(function(err, selection) {
+    if (err) {
+      return next(err)
+    }
+
+    req.vote.selections.push(selection)
+    req.vote.save(function(err,vote) {
+      if (err) { return next(err) }
+      res.json(selection)
+    })
+  })
+})
 
 //curl --data 'title=test' http://localhost:3000/votes
 
