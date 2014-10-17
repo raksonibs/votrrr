@@ -17,7 +17,17 @@ module.exports = function(app){
     })
   });
 
-  api.get('votes/:vote', function(req, res){
+  api.param('selection', function(req, res, next, id){
+    var query = Selection.findById(id);
+    query.exec(function(err, selection){
+      if(err) return next(err);
+      if(!selection) return next(new Error('cannot find selection'));
+      req.selection = selection;
+      return next();
+    })
+  });
+
+  api.get('/votes/:vote', function(req, res){
     req.vote.populate('selections', function(err, vote){
       res.json(vote);
     })
