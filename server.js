@@ -10,7 +10,6 @@ require('./server/config/express')(app, config);
 var mongoose = require('mongoose');
 mongoose.connect(config.database);
 require('./server/models/Votes');
-require('./server/models/Selections');
 
 
 // Routes

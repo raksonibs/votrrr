@@ -36,30 +36,13 @@ module.exports = function(app){
     // this is for nested attributes. Is it all necessary?
     selections = []
 
-    for (x in req.body.selections) {
-      var new_selection = new Selection(req.body.selections[x])
-      selections.push(new_selection)
-    }
-
-    req.body.selections = selections
-
     var vote = new Vote(req.body); 
 
     vote.save(function(err, vote) {
       if (err) { 
         return next(err);       
       } 
-
-      for (x in req.body.selections) {
-        vote.selections.push(req.body.selections[x]) 
-      }
-
-      vote.save(function(err, vote) {
-        if (err) { 
-          return next(err);       
-        } 
-        res.json(vote);
-      })
+      res.json(vote);
     })
   });
 
