@@ -5,39 +5,25 @@ var app = angular.module('votrrr', ['ui.router']);
 app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
   $stateProvider
     .state('home', {
-      url: '/home',
-      templateUrl: '/home.html',
+      url: '/',
+      templateUrl: 'partials/home',
       controller: 'MainCtrl',
       resolve: {
-        votePromise: ['votes', function(votes) {          
-          return votes.getAll().votes
+        votePromise: ['votes', function(Vote) {          
+          return Vote.getAll()
         }]
       }
     })
-    // .state('vote', {
-    //   url: '/voting/{title}',
-    //   templateUrl: '/vote.html',
-    //   controller: 'VoteCtrl'
-    // })
-    // .state('votes', {
-    //   url: '/votes',
-    //   templateUrl: '/votes.html',
-    //   controller: 'VotesCtrl'
-    // })
-    // .state('new_vote', {
-    //   url: '/new_vote',
-    //   templateUrl: '/new_vote.html',
-    //   controller: 'NewVoteCtrl'
-    // })
 
   // $urlRouterProvider.otherwise('/')
 
   $locationProvider.html5Mode(true)
 }])
 
-app.factory('votes', ['$http', function($http) {
-  var votes = {
-    votes: [{title: 'Which sport?', 
+app.factory('Vote', ['$http', function($http) {
+  var Vote = {}
+
+  Vote.votes = [{title: 'Which sport?', 
              options: [{option_title:'Squash', points: 10},
                        {option_title:'baseball', points: 0},
                        {option_title:'Basketball', points: 1}
@@ -52,16 +38,15 @@ app.factory('votes', ['$http', function($http) {
                        ]
                      }
             ]
-  }
 
-  votes.getAll = function() {
-    return $http.get('/votes').success(function(data) {
-      angular.copy(data, votes.votes)
+  Vote.getAll = function() {
+    return $http.get('/api/votes').success(function(data) {
+      angular.copy(Vote.votes,data)
       // angular.copy allows for a copy from client side votes, making data the votes.votes still return value
     })
   }
 
-  return votes
+  return Vote
 }])
 
 app.factory('options', function() {
@@ -117,13 +102,14 @@ app.controller('NewVoteCtrl', ['votes', '$scope', function(votes, $scope) {
   
 }])
 
-app.controller('MainCtrl', ['votes','$scope', '$location', function(votes,$scope, $location) {
+app.controller('MainCtrl', function($scope, $location, Vote) {
 
-  $scope.votes = votes.votes
-  console.log(votes)
+  $scope.votes = Vote.votes
+  console.log(Vote.votes)
 
   $scope.go = function( path ) {
     $location.path( path )
   }
 
-}]);
+});
+
