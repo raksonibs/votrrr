@@ -1,5 +1,6 @@
 <div ng-repeat="vote in votes">
   <h3> {{vote.title}}</h3>
+  
   <div ng-repeat="selection in vote.selections | orderBy: '-points'">
     {{selection.selection_title}}: {{selection.points}}
 

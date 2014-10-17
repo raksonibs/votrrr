@@ -29,7 +29,7 @@ app.controller('NewVotesCtrl', function(Vote, $scope) {
     $scope.selections = []
   }
 
-  $scope.addOptionForm = function() {
+  $scope.addSelectionForm = function() {
 
     $scope.selections.push({
       selection_title: $scope.selection_title,
@@ -45,7 +45,7 @@ app.controller('MainCtrl', function($scope, $location, Vote) {
 
   $scope.votes = Vote.votes
 
-  console.log(Vote.votes.length)
+  console.log(Vote.votes[0].selections)
 
   $scope.go = function( path ) {
     $location.path( path )

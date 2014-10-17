@@ -32,8 +32,22 @@ module.exports = function(app){
   });
 
   // create vote
-  api.post('/votes', function(req, res, next){
+  api.post('/votes', function(req, res, next) {
+
+    selections = []
+
+    for (x in req.body.selections) {
+      var new_selection = new Selection(selections[x])
+      selections.push(new_selection)
+    }
+
+    req.body.selections = selections
+
     var vote = new Vote(req.body);  
+
+    console.log(vote.selections[0].selection_title)
+    console.log(vote.selections[1].selection_title)
+
     vote.save(function(err, vote) {
       if (err) { 
         return next(err);       
