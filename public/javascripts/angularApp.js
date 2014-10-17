@@ -1,24 +1,33 @@
-var app = angular.module('votrrr', ['ui.router']);
+var app = angular.module('votrrr', [
+  'ui.router'
+]);
 
-// resolve: to call at apporpriate time to load data. once hom is enterted, automatically query all votes before state loads
+app.config(function($stateProvider, $urlRouterProvider, $locationProvider){
 
-app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
   $stateProvider
     .state('home', {
       url: '/',
       templateUrl: 'partials/home',
       controller: 'MainCtrl',
       resolve: {
-        votePromise: ['votes', function(Vote) {          
-          return Vote.getAll()
-        }]
+        postPromise: function(Vote){
+          return Vote.getAll();
+        }
       }
     })
+    .state('about', {
+      url: '/about',
+      templateUrl: 'partials/about'
+    })
+    .state('vote', {
+      url: '/vote/{id}',  
+      templateUrl: "partials/vote",
+      controller: 'VoteCtrl'
+    });
 
-  // $urlRouterProvider.otherwise('/')
-
-  $locationProvider.html5Mode(true)
-}])
+  $urlRouterProvider.otherwise('/');
+  $locationProvider.html5Mode(true);
+})
 
 app.factory('Vote', ['$http', function($http) {
   var Vote = {}
