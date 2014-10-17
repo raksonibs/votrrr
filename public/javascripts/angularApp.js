@@ -10,27 +10,27 @@ app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functio
       controller: 'MainCtrl',
       resolve: {
         votePromise: ['votes', function(votes) {          
-          return votes.getAll()
+          return votes.getAll().votes
         }]
       }
     })
-    .state('vote', {
-      url: '/voting/{title}',
-      templateUrl: '/vote.html',
-      controller: 'VoteCtrl'
-    })
-    .state('votes', {
-      url: '/votes',
-      templateUrl: '/votes.html',
-      controller: 'VotesCtrl'
-    })
-    .state('new_vote', {
-      url: '/new_vote',
-      templateUrl: '/new_vote.html',
-      controller: 'NewVoteCtrl'
-    })
+    // .state('vote', {
+    //   url: '/voting/{title}',
+    //   templateUrl: '/vote.html',
+    //   controller: 'VoteCtrl'
+    // })
+    // .state('votes', {
+    //   url: '/votes',
+    //   templateUrl: '/votes.html',
+    //   controller: 'VotesCtrl'
+    // })
+    // .state('new_vote', {
+    //   url: '/new_vote',
+    //   templateUrl: '/new_vote.html',
+    //   controller: 'NewVoteCtrl'
+    // })
 
-  $urlRouterProvider.otherwise('home')
+  // $urlRouterProvider.otherwise('/')
 
   $locationProvider.html5Mode(true)
 }])
@@ -119,7 +119,8 @@ app.controller('NewVoteCtrl', ['votes', '$scope', function(votes, $scope) {
 
 app.controller('MainCtrl', ['votes','$scope', '$location', function(votes,$scope, $location) {
 
-  $scope.votes = votes
+  $scope.votes = votes.votes
+  console.log(votes.votes)
 
   $scope.go = function( path ) {
     $location.path( path )
