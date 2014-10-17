@@ -1,11 +1,18 @@
 var app = angular.module('votrrr', ['ui.router']);
 
+// resolve: to call at apporpriate time to load data. once hom is enterted, automatically query all votes before state loads
+
 app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
   $stateProvider
     .state('home', {
       url: '/home',
       templateUrl: '/home.html',
-      controller: 'MainCtrl'
+      controller: 'MainCtrl',
+      resolve: {
+        votePromise: ['votes', function(votes) {          
+          return votes.getAll()
+        }]
+      }
     })
     .state('vote', {
       url: '/voting/{title}',
@@ -25,10 +32,10 @@ app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functio
 
   $urlRouterProvider.otherwise('home')
 
-  // $locationProvider.html5Mode(true)
+  $locationProvider.html5Mode(true)
 }])
 
-app.factory('votes', function() {
+app.factory('votes', ['$http', function($http) {
   var votes = {
     votes: [{title: 'Which sport?', 
              options: [{option_title:'Squash', points: 10},
@@ -45,6 +52,13 @@ app.factory('votes', function() {
                        ]
                      }
             ]
+  }
+
+  votes.getAll = function() {
+    return $http.get('/votes').success(function(data) {
+      angular.copy(data, votes.votes)
+      // angular.copy allows for a copy from client side votes, making data the votes.votes still return value
+    })
   }
 
   return votes
@@ -104,6 +118,8 @@ app.controller('NewVoteCtrl', ['votes', '$scope', function(votes, $scope) {
 }])
 
 app.controller('MainCtrl', ['votes','$scope', '$location', function(votes,$scope, $location) {
+
+  $scope.votes = votes
 
   $scope.go = function( path ) {
     $location.path( path )
