@@ -6,7 +6,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functio
   $stateProvider
     .state('home', {
       url: '/home',
-      templateUrl: '/home',
+      templateUrl: '/home.html',
       controller: 'MainCtrl',
       resolve: {
         votePromise: ['votes', function(votes) {          
@@ -120,7 +120,7 @@ app.controller('NewVoteCtrl', ['votes', '$scope', function(votes, $scope) {
 app.controller('MainCtrl', ['votes','$scope', '$location', function(votes,$scope, $location) {
 
   $scope.votes = votes.votes
-  console.log(votes.votes)
+  console.log(votes)
 
   $scope.go = function( path ) {
     $location.path( path )
