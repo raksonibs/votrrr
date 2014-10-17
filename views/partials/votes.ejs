@@ -1,0 +1,9 @@
+<div ng-repeat="vote in votes">
+  <h3> {{vote.title}}</h3>
+  <div ng-repeat="option in vote.options | orderBy: '-points'">
+    {{option.option_title}}: {{option.points}}
+
+    <!-- if owner of vote need to have add option or edit or delete -->
+    <button ng-click="upvote(option)">Upvote</button>
+  </div>
+</div>
