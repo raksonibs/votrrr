@@ -32,9 +32,10 @@ router.param('selection', function(req,res,next,option_title) {
   })
 })
 
-router.get('/votes/:vote', function(req,res) {
+router.get('/votes/:vote', function(req,res,next) {
   // need to retrieve selections to vote
-  req.vote.populate('selections', function(err, vote) {
+  // console.log(req.vote[0].populate('selections'))
+  req.vote[0].populate('selections', function(err, vote) {
     res.json(req.vote)
   })  
 })
@@ -81,6 +82,10 @@ router.post('/votes', function(req,res, next) {
     if (err) { return next(err) }
     res.json(vote)
   })
+})
+
+router.get('*', function(req,res) {
+  res.render('index')
 })
 
 module.exports = router;

@@ -6,7 +6,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', functio
   $stateProvider
     .state('home', {
       url: '/home',
-      templateUrl: '/home.html',
+      templateUrl: '/home',
       controller: 'MainCtrl',
       resolve: {
         votePromise: ['votes', function(votes) {          
@@ -62,7 +62,7 @@ app.factory('votes', ['$http', function($http) {
   }
 
   return votes
-})
+}])
 
 app.factory('options', function() {
   var o = {
