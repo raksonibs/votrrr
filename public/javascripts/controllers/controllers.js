@@ -18,12 +18,17 @@ app.controller('NewVotesCtrl', function(Vote, $scope) {
   $scope.addVote = function() {
     if ( $scope.title === '' ) {
       return;
-    } 
+    }     
 
     Vote.create({
       title: $scope.title,
       selections: $scope.selections
-    })
+    })    
+
+    $scope.votes = Vote.votes
+    // still doesnt get update
+    // parentobj targets parent controller which mainctrl is
+    // this shouldn't be necessary, but I think mainctrl scope is overriding this one here.
 
     $scope.title = ""
     $scope.selections = []
@@ -43,9 +48,7 @@ app.controller('NewVotesCtrl', function(Vote, $scope) {
 
 app.controller('MainCtrl', function($scope, $location, Vote) {
 
-  $scope.votes = Vote.votes
-
-  console.log(Vote.votes[0].selections)
+  $scope.votes = Vote.votes  
 
   $scope.go = function( path ) {
     $location.path( path )
