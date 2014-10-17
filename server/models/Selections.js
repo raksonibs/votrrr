@@ -3,7 +3,7 @@ var mongoose = require('mongoose')
 var SelectionSchema = new mongoose.Schema({
   selection_title: String,
   points: { type: Number, default: 0 },
-  votes: [{type: mongoose.Schema.Types.ObjectId, ref: 'Vote'}]  
+  vote: {type: mongoose.Schema.Types.ObjectId, ref: 'Vote'}  
 })
 
 SelectionSchema.methods.upvote = function(cb) {
