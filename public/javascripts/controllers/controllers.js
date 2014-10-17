@@ -23,7 +23,7 @@ app.controller('NewVotesCtrl', function(Vote, $scope) {
     Vote.create({
       title: $scope.title,
       selections: $scope.selections
-    })   
+    })
 
     $scope.title = ""
     $scope.selections = []
@@ -42,7 +42,7 @@ app.controller('NewVotesCtrl', function(Vote, $scope) {
 })
 
 app.controller('MainCtrl', function($scope, $location, Vote) {
-  $scope.votes = Vote.votes
+  $scope.votes = Vote.getAll()
 
   $scope.go = function( path ) {
     $location.path( path )
