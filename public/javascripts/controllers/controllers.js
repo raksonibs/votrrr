@@ -11,16 +11,16 @@ app.controller('VotesCtrl', function(Vote, $scope) {
   }
 })
 
-app.controller('NewVoteCtrl', ['votes', '$scope', function(votes, $scope) {
-  $scope.votes = votes.votes
-  $scope.options = []
+app.controller('NewVotesCtrl', function(Vote, $scope) {
+  $scope.votes = Vote.votes
+  $scope.selections = []
 
   $scope.addVote = function() {
     if ( $scope.title === '' ) {
       return;
     } 
 
-    $scope.votes.push({
+    Vote.create({
       title: $scope.title,
       options: $scope.options//have to worry about mutliple numbers
     })

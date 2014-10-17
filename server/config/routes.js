@@ -33,9 +33,11 @@ module.exports = function(app){
 
   // create vote
   api.post('/votes', function(req, res, next){
-    var vote = new Vote(req.body);
-    vote.save(function(err, vote){
-      if (err) return next(err);
+    var vote = new Vote(req.body);  
+    vote.save(function(err, vote) {
+      if (err) { 
+        return next(err);       
+      }    
       res.json(vote);
     })
   });

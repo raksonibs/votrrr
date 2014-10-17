@@ -24,5 +24,11 @@ app.factory('Vote', ['$http', function($http) {
     })
   }
 
+  Vote.create = function(vote) {
+    return $http.post('/api/votes', vote).success(function(data) {
+      Vote.votes.push(data)
+    })
+  }
+
   return Vote
 }])

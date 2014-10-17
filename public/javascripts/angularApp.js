@@ -29,6 +29,11 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider){
       templateUrl: 'partials/votes',
       controller: 'VotesCtrl'
     })
+    .state('new_vote', {
+      url: '/new_vote',
+      templateUrl: 'partials/new_vote',
+      controller: 'NewVotesCtrl'
+    })
 
   $urlRouterProvider.otherwise('/');
   $locationProvider.html5Mode(true);
