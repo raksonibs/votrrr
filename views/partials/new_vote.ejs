@@ -1,0 +1,13 @@
+<form name= "voteForm">
+  Vote Title:<input type="text" ng-model="title">{{title}}
+  <br>
+  <div ng-repeat="selection in selections">
+    {{selection.selection_title}}: {{selection.points}}
+  </div>
+  <form ng-model="selections" ng-submit="$event.preventDefault()">
+    Add Selection:<input type="text" ng-model="selection_title">{{selection_title}}
+    <button ng-click="addSelectionForm()" type="click">Add Selection</button>
+  </form>
+  <br>
+  <button ng-click="addVote()" type="submit">Add Vote</button>
+</form>

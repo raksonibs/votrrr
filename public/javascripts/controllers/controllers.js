@@ -6,8 +6,8 @@ app.controller('VoteCtrl', ['votes', '$scope', '$stateParams', function(votes, $
 app.controller('VotesCtrl', function(Vote, $scope) {
   $scope.votes = Vote.votes
 
-  $scope.upvote = function(option) {
-    option.points += 1;
+  $scope.upvote = function(selection) {
+    selection.points += 1;
   }
 })
 
@@ -22,30 +22,30 @@ app.controller('NewVotesCtrl', function(Vote, $scope) {
 
     Vote.create({
       title: $scope.title,
-      options: $scope.options//have to worry about mutliple numbers
+      selections: $scope.selections
     })
 
     $scope.title = ""
-    $scope.options = []
+    $scope.selections = []
   }
 
   $scope.addOptionForm = function() {
 
-    console.log($scope.options)
-
-    $scope.options.push({
-      option_title: $scope.option_title,
+    $scope.selections.push({
+      selection_title: $scope.selection_title,
       points: 0
     })
 
-    $scope.option_title = ""
+    $scope.selection_title = ""
   }
   
-}])
+})
 
 app.controller('MainCtrl', function($scope, $location, Vote) {
 
   $scope.votes = Vote.votes
+
+  console.log(Vote.votes.length)
 
   $scope.go = function( path ) {
     $location.path( path )
