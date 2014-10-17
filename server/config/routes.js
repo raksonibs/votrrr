@@ -46,10 +46,10 @@ module.exports = function(app){
     })
   });
 
-  api.put('/votes/:vote/upvote', function(req, res, next){
-    req.vote.upvote(function(err, vote){
+  api.put('/votes/:vote/selections/:selection/upvote', function(req, res, next){
+    req.vote.selections.selection.upvote(function(err, selection){
       if(err) return next(err);
-      res.json(vote);
+      res.json(selection);
     })
   });
 

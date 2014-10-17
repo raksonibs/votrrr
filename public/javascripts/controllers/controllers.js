@@ -3,13 +3,14 @@ app.controller('VoteCtrl', ['votes', '$scope', '$stateParams', function(votes, $
   $scope.vote = votes.votes[$stateParams.title]
 }])
 
-app.controller('VotesCtrl', function(Vote, $scope) {
+app.controller('VotesCtrl', ['Vote','Selection','$scope', function(Vote, Selection, $scope) {
   $scope.votes = Vote.votes
 
-  $scope.upvote = function(selection) {
-    selection.points += 1;
+  $scope.upvote = function(vote,selection) {
+    console.log('test')
+    Selection.upvote(vote,selection)
   }
-})
+}])
 
 app.controller('NewVotesCtrl', function(Vote, $scope) {
   $scope.votes = Vote.votes
