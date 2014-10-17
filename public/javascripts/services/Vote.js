@@ -19,15 +19,14 @@ app.factory('Vote', ['$http', function($http) {
 
   Vote.getAll = function() {
     return $http.get('/api/votes').success(function(data) {
-      angular.copy(Vote.votes,data)
+      angular.copy(data, Vote.votes)
       // angular.copy allows for a copy from client side votes, making data the votes.votes still return value
     })
   }
 
   Vote.create = function(vote) {
     return $http.post('/api/votes', vote).success(function(data) {
-      console.log('does this get caled?')
-      return Vote.votes.push(data)
+      Vote.votes.push(data)
     })
   }
 

@@ -3,16 +3,16 @@ var app = angular.module('votrrr', [
 ]);
 
 app.config(function($stateProvider, $urlRouterProvider, $locationProvider){
-
+  // note needed to inject vote into the promise
   $stateProvider
     .state('home', {
       url: '/',
       templateUrl: 'partials/home',
       controller: 'MainCtrl',
       resolve: {
-        postPromise: function(Vote){
+        postPromise: ['Vote', function(Vote){
           return Vote.getAll();
-        }
+        }]
       }
     })
     .state('about', {
