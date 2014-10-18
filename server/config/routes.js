@@ -6,6 +6,21 @@ var api = express.Router();
 
 module.exports = function(app){
 
+  api.use(function(req,res, next) {
+    var selections_arr = []
+    var merged_arr = []
+
+    Vote.find(function(err, votes) {
+      if (err) return next(err)
+      for (x in votes) {
+        selections_arr.push(votes[x].selections)
+      }
+
+      req.selections = merged_arr.concat.apply(merged_arr, selections_arr)
+      return next()
+    })
+  })
+
   // attach vote to req obj (req.vote)
   api.param('vote', function(req, res, next, id){
     var query = Vote.findById(id);
@@ -18,26 +33,20 @@ module.exports = function(app){
   });
 
   api.param('selection', function(req, res, next, id){
-//localhost:3000/api/votes/5441ef3d1c5cc21fbe6a20d7/selections/5441ef3d1c5cc21fbe6a20dd
-    var id = mongoose.Types.ObjectId(id)
-    Selection.findOne({"_id": id}, function(err, selection){
-      if(err) return next(err);
-      if(!selection) return next(new Error('cannot find selection'));
-      req.selection = selection;
-      return next();
-    })
+    for (x in req.selections) {
+      if ( req.selections[x].id === id ) {
+        req.selection = req.selections[x]
+        return next()
+      }
+    }
+    return next(new Error('Cannot find that selection'));
   });
 
   api.get('/selections', function(req,res,next) {
-    Selection.find(function(err, selections) {
-      if (err) next(err)
-      res.json(selections)
-    })
+    res.json(req.selections)
   })
 
   api.get('/selections/:selection', function(req,res,next) {
-    //http://localhost:3000/api/selections/5441ef3d1c5cc21fbe6a20dc
-    // this route still not operating as normal. not sure why? Will use vote/selections/selection instead
     res.json(req.selection)
   })
 
@@ -65,11 +74,7 @@ module.exports = function(app){
   api.post('/votes', function(req, res, next) {
     var vote = new Vote(req.body); 
 
-    for (x in req.body.selections) {
-      var selection = new Selection(req.body.selections[x])
-
-      selection.save(function(err,selection){})
-    }
+    // has to be easier way to associate the two on creation?
 
     vote.save(function(err, vote) {
       if (err) { 
@@ -91,16 +96,16 @@ module.exports = function(app){
   });
 
   api.post('/votes/:vote/selections', function(req, res, next){
-    var comment = new Selection(req.body);
-    comment.vote = req.vote;
+    var selection = new Selection(req.body);
+    selection.vote = req.vote;
 
-    comment.save(function(err, comment){
+    selection.save(function(err, selection){
       if (err) return next(err);
-      req.vote.selections.push(comment);
+      req.vote.selections.push(selection);
       req.vote.save(function(err, vote){
         // vote updated
         if(err) return next(err);
-        res.json(comment);
+        res.json(selection);
       });
     });
   });
