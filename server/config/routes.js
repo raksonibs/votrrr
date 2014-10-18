@@ -18,13 +18,14 @@ module.exports = function(app){
   });
 
   api.param('selection', function(req, res, next, id){
-    console.log(id)
-    //http://localhost:3000/api/votes/544186a3d41e4a86b0583d72/selections/544186a3d41e4a86b0583d74
-    var query = Selection.findById(id);
-    query.exec(function(err, selection){
+//localhost:3000/api/votes/5441ef3d1c5cc21fbe6a20d7/selections/5441ef3d1c5cc21fbe6a20dd
+    var id = mongoose.Types.ObjectId(id)
+    Selection.findOne({"_id": id}, function(err, selection){
       if(err) return next(err);
       if(!selection) return next(new Error('cannot find selection'));
       req.selection = selection;
+      console.log('proper selection captured by param is')
+      console.log(selection)
       return next();
     })
   });
@@ -37,6 +38,7 @@ module.exports = function(app){
   })
 
   api.get('/selections/:selection', function(req,res,next, id) {
+    //http://localhost:3000/api/selections/5441ef3d1c5cc21fbe6a20dc
     Selection.findById(id,function(err, selections) {
       if (err) next(err)
       res.json(selections)
@@ -61,6 +63,12 @@ module.exports = function(app){
   api.post('/votes', function(req, res, next) {
     var vote = new Vote(req.body); 
 
+    for (x in req.body.selections) {
+      var selection = new Selection(req.body.selections[x])
+
+      selection.save(function(err,selection){})
+    }
+
     vote.save(function(err, vote) {
       if (err) { 
         return next(err);       
@@ -69,11 +77,10 @@ module.exports = function(app){
     })
   });
 
-  api.get('/votes/:vote/selections/:selection/', function(req, res, next){
-    Selection.find(req.selection, function(err, next) {
-      if (err) next(err)
-      res.json(selection)
-    })
+  api.get('/votes/:vote/selections/:selection', function(req, res, next){
+    console.log('selection currently being passed to params from url is')
+    console.log(req.selection)
+    res.json(selection)
   });
 
   api.get('/votes/:vote/selections/:selection/upvote', function(req, res, next){
