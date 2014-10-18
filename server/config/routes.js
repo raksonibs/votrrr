@@ -18,6 +18,8 @@ module.exports = function(app){
   });
 
   api.param('selection', function(req, res, next, id){
+    console.log(id)
+    //http://localhost:3000/api/votes/544186a3d41e4a86b0583d72/selections/544186a3d41e4a86b0583d74
     var query = Selection.findById(id);
     query.exec(function(err, selection){
       if(err) return next(err);
@@ -26,6 +28,20 @@ module.exports = function(app){
       return next();
     })
   });
+
+  api.get('/selections', function(req,res,next) {
+    Selection.find(function(err, selections) {
+      if (err) next(err)
+      res.json(selections)
+    })
+  })
+
+  api.get('/selections/:selection', function(req,res,next, id) {
+    Selection.findById(id,function(err, selections) {
+      if (err) next(err)
+      res.json(selections)
+    })
+  })
 
   api.get('/votes/:vote', function(req, res){
     req.vote.populate('selections', function(err, vote){
@@ -43,9 +59,6 @@ module.exports = function(app){
 
   // create vote
   api.post('/votes', function(req, res, next) {
-    // this is for nested attributes. Is it all necessary?
-    selections = []
-
     var vote = new Vote(req.body); 
 
     vote.save(function(err, vote) {
@@ -56,7 +69,14 @@ module.exports = function(app){
     })
   });
 
-  api.put('/votes/:vote/selections/:selection/upvote', function(req, res, next){
+  api.get('/votes/:vote/selections/:selection/', function(req, res, next){
+    Selection.find(req.selection, function(err, next) {
+      if (err) next(err)
+      res.json(selection)
+    })
+  });
+
+  api.get('/votes/:vote/selections/:selection/upvote', function(req, res, next){
     req.vote.selections.selection.upvote(function(err, selection){
       if(err) return next(err);
       res.json(selection);
