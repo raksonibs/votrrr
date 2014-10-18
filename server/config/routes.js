@@ -24,8 +24,6 @@ module.exports = function(app){
       if(err) return next(err);
       if(!selection) return next(new Error('cannot find selection'));
       req.selection = selection;
-      console.log('proper selection captured by param is')
-      console.log(selection)
       return next();
     })
   });
@@ -37,17 +35,21 @@ module.exports = function(app){
     })
   })
 
-  api.get('/selections/:selection', function(req,res,next, id) {
+  api.get('/selections/:selection', function(req,res,next) {
     //http://localhost:3000/api/selections/5441ef3d1c5cc21fbe6a20dc
-    Selection.findById(id,function(err, selections) {
-      if (err) next(err)
-      res.json(selections)
-    })
+    // this route still not operating as normal. not sure why? Will use vote/selections/selection instead
+    res.json(req.selection)
   })
 
   api.get('/votes/:vote', function(req, res){
     req.vote.populate('selections', function(err, vote){
       res.json(vote);
+    })
+  });
+
+  api.get('/votes/:vote/selections', function(req, res){
+    req.vote.populate('selections', function(err, vote){
+      res.json(vote.selections);
     })
   });
 
@@ -78,13 +80,11 @@ module.exports = function(app){
   });
 
   api.get('/votes/:vote/selections/:selection', function(req, res, next){
-    console.log('selection currently being passed to params from url is')
-    console.log(req.selection)
-    res.json(selection)
+    res.json(req.selection)
   });
 
   api.get('/votes/:vote/selections/:selection/upvote', function(req, res, next){
-    req.vote.selections.selection.upvote(function(err, selection){
+    req.selection.upvote(function(err, selection){
       if(err) return next(err);
       res.json(selection);
     })
