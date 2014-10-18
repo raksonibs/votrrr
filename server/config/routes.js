@@ -50,6 +50,12 @@ module.exports = function(app){
     res.json(req.selection)
   })
 
+  api.get('/selections/:selection/upvote', function(req, res, next){
+    req.selection.points +=1
+    req.selection.save()
+    res.json(req.selection)
+  });
+
   api.get('/votes/:vote', function(req, res){
     req.vote.populate('selections', function(err, vote){
       res.json(vote);
@@ -73,8 +79,6 @@ module.exports = function(app){
   // create vote
   api.post('/votes', function(req, res, next) {
     var vote = new Vote(req.body); 
-
-    // has to be easier way to associate the two on creation?
 
     vote.save(function(err, vote) {
       if (err) { 

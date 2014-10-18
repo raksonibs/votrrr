@@ -16,6 +16,15 @@ SelectionSchema.methods.upvote = function(cb) {
   this.save(cb)
 }
 
+VoteSchema.methods.upvote = function(selection,cb) {
+  for (x in this.selections) {
+    if ( this.selections[x] === selection ) {
+      this.selections[x].points += 1
+      this.save
+    }
+  }
+}
+
 // populate method useful to get all Selections associated to Vote
 
 mongoose.model('Selection', SelectionSchema)
