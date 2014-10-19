@@ -93,7 +93,6 @@ module.exports = function(app){
   // create vote
   api.post('/votes', function(req, res, next) {
     var selectionIdArr = []
-    console.log('creating vote to refenrece ')
     var vote = new Vote({
       title: req.body.title,
       selections: selectionIdArr
@@ -115,8 +114,6 @@ module.exports = function(app){
             selections[vote_selection.selection_title] = vote_selection
             selectionIdArr.push(vote_selection._id) 
             if ( selectionIdArr.length === selection_titles.length ) {
-              console.log('returning only once length is reached in callback')
-              console.log(selectionIdArr)
               vote.selections = selectionIdArr
               vote.save(function(err, vote) {
                 if (err) { 
