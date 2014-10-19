@@ -3,23 +3,10 @@ var mongoose = require('mongoose');
 var Vote = mongoose.model('Vote');
 var Selection = mongoose.model('Selection');
 var api = express.Router();
+var q = require('q');
+var deferred = require('deferred');
 
 module.exports = function(app){
-
-  api.use(function(req,res, next) {
-    var selections_arr = []
-    var merged_arr = []
-
-    Vote.find(function(err, votes) {
-      if (err) return next(err)
-      for (x in votes) {
-        selections_arr.push(votes[x].selections)
-      }
-
-      req.selections = merged_arr.concat.apply(merged_arr, selections_arr)
-      return next()
-    })
-  })
 
   // attach vote to req obj (req.vote)
   api.param('vote', function(req, res, next, id){
@@ -43,7 +30,10 @@ module.exports = function(app){
   });
 
   api.get('/selections', function(req,res,next) {
-    res.json(req.selections)
+    Selection.find({}, function(err, selections) {
+      if (err) next(err)
+      res.json(selections)
+    })
   })
 
   api.get('/selections/:selection', function(req,res,next) {
@@ -99,34 +89,47 @@ module.exports = function(app){
       });
     });
   });
+
   // create vote
   api.post('/votes', function(req, res, next) {
-    var selection_titles = req.body.selections
     var selectionIdArr = []
-    var selections = {}
-
-    for (x in selection_titles) {
-      var selection = new Selection({
-        selection_title: selection_titles[x]
-      })
-      selection.save(function(err, vote_selection) {
-        if (err) console.log(err)
-        selections[vote_selection.selection_title] = vote_selection
-        selectionIdArr.push(vote_selection.id) 
-      })
-    }
-
+    console.log('creating vote to refenrece ')
     var vote = new Vote({
       title: req.body.title,
       selections: selectionIdArr
     })
+    // must be a better way to refactor this with promises
 
-    vote.save(function(err, vote) {
-      if (err) { 
-        return next(err);       
-      } 
-      res.json(vote);
+    q()
+    .then(function() {
+      var selection_titles = req.body.selections
+      var selections = {}
+
+      for (x in selection_titles) {
+        var selection = new Selection({
+          selection_title: selection_titles[x].selection_title,
+          vote: vote._id
+        })
+        q.nfcall(selection.save(function(err, vote_selection) {
+            if (err) console.log(err)
+            selections[vote_selection.selection_title] = vote_selection
+            selectionIdArr.push(vote_selection._id) 
+            if ( selectionIdArr.length === selection_titles.length ) {
+              console.log('returning only once length is reached in callback')
+              console.log(selectionIdArr)
+              vote.selections = selectionIdArr
+              vote.save(function(err, vote) {
+                if (err) { 
+                  return next(err);       
+                } 
+                return res.json(vote);
+              })
+            }
+          })
+        )
+      }
     })
+
   });
 
   app.use('/api', api);
