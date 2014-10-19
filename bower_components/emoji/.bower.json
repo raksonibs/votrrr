@@ -1,0 +1,14 @@
+{
+  "name": "emoji",
+  "homepage": "https://github.com/fengmk2/emoji",
+  "version": "0.1.2",
+  "_release": "0.1.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.1.2",
+    "commit": "6bc8d8a346a7e23dca76ba6c11e684f31dc3fafb"
+  },
+  "_source": "git://github.com/fengmk2/emoji.git",
+  "_target": "0.1.2",
+  "_originalSource": "emoji"
+}

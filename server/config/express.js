@@ -20,4 +20,5 @@ module.exports = function(app, config){
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(cookieParser());
   app.use(express.static(path.join(config.rootPath, 'public')));
+  app.use('/bower_components',  express.static(__dirname + '/bower_components'));
 }

@@ -3,8 +3,10 @@ var mongoose = require('mongoose')
 var SelectionSchema = new mongoose.Schema({
   selection_title: String,
   points: { type: Number, default: 0 },
-  vote: {type: mongoose.Schema.Types.ObjectId, ref: 'Vote'}  
+  vote: {type: mongoose.Schema.Types.ObjectId, ref: 'Vote'} 
 })
+
+// these reference each other via ref embedded document, populate to grab. Save tricky, but eitehr through promise or proper query
 
 var VoteSchema = new mongoose.Schema({
   title: String,
