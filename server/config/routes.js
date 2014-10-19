@@ -23,7 +23,7 @@ module.exports = function(app){
 
   // attach vote to req obj (req.vote)
   api.param('vote', function(req, res, next, id){
-    var query = Vote.findById(id);
+    var query = Vote.findById(id).populate('selections');
     query.exec(function(err, vote){
       if(err) return next(err);
       if(!vote) return next(new Error('cannot find vote'));
@@ -33,13 +33,13 @@ module.exports = function(app){
   });
 
   api.param('selection', function(req, res, next, id){
-    for (x in req.selections) {
-      if ( req.selections[x].id === id ) {
-        req.selection = req.selections[x]
-        return next()
-      }
-    }
-    return next(new Error('Cannot find that selection'));
+    var query = Selection.findById(id).populate('vote');
+    query.exec(function(err, selection){
+      if(err) return next(err);
+      if(!selection) return next(new Error('cannot find that particular selection'));
+      req.selection = selection;
+      return next();
+    })
   });
 
   api.get('/selections', function(req,res,next) {
@@ -52,41 +52,27 @@ module.exports = function(app){
 
   api.get('/selections/:selection/upvote', function(req, res, next){
     req.selection.points +=1
-    req.selection.save()
-    res.json(req.selection)
-  });
-
-  api.get('/votes/:vote', function(req, res){
-    req.vote.populate('selections', function(err, vote){
-      res.json(vote);
+    req.selection.save(function(err, selection) {
+      if (err) next(err)
+      res.json(selection)
     })
   });
-
-  api.get('/votes/:vote/selections', function(req, res){
-    req.vote.populate('selections', function(err, vote){
-      res.json(vote.selections);
-    })
-  });
-
   // all votes
   api.get('/votes', function(req, res, next){
-    Vote.find(function(err, votes){
+    Vote.find({}).populate('selections').exec(function(err, votes){
       if (err) return next(err);
       res.json(votes);
     });
   });
 
-  // create vote
-  api.post('/votes', function(req, res, next) {
-    var vote = new Vote(req.body); 
-
-    vote.save(function(err, vote) {
-      if (err) { 
-        return next(err);       
-      } 
-      res.json(vote);
-    })
+  api.get('/votes/:vote', function(req, res){
+    res.json(req.vote);
   });
+
+  api.get('/votes/:vote/selections', function(req, res){
+    res.json(req.vote.selections);
+  });
+
 
   api.get('/votes/:vote/selections/:selection', function(req, res, next){
     res.json(req.selection)
@@ -112,6 +98,35 @@ module.exports = function(app){
         res.json(selection);
       });
     });
+  });
+  // create vote
+  api.post('/votes', function(req, res, next) {
+    var selection_titles = req.body.selections
+    var selectionIdArr = []
+    var selections = {}
+
+    for (x in selection_titles) {
+      var selection = new Selection({
+        selection_title: selection_titles[x]
+      })
+      selection.save(function(err, vote_selection) {
+        if (err) console.log(err)
+        selections[vote_selection.selection_title] = vote_selection
+        selectionIdArr.push(vote_selection.id) 
+      })
+    }
+
+    var vote = new Vote({
+      title: req.body.title,
+      selections: selectionIdArr
+    })
+
+    vote.save(function(err, vote) {
+      if (err) { 
+        return next(err);       
+      } 
+      res.json(vote);
+    })
   });
 
   app.use('/api', api);

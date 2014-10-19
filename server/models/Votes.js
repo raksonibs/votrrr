@@ -8,7 +8,7 @@ var SelectionSchema = new mongoose.Schema({
 
 var VoteSchema = new mongoose.Schema({
   title: String,
-  selections: [SelectionSchema]  
+  selections: [{type: mongoose.Schema.Types.ObjectId, ref: 'Selection'}]  
 })
 
 SelectionSchema.methods.upvote = function(cb) {
