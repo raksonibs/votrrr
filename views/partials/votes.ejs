@@ -1,9 +1,14 @@
 <div ng-repeat="vote in votes">
   <h3> {{vote.title}}</h3>
   <div ng-repeat="selection in vote.selections | orderBy: '-points'">
-    {{selection.selection_title}}: {{selection.points}}
+    <div>
+      {{selection.selection_title}}: {{selection.points}}
 
-    <!-- if owner of vote need to have add selection or edit or delete -->
-    <button ng-click="upvote(vote, selection)">Upvote</button>
+      <!-- if owner of vote need to have add selection or edit or delete -->
+      <button class="btn btn-primary" ng-click="upvote(vote, selection)">Upvote</button>
+    </div>
+    </br>
   </div>
 </div>
+
+<!-- load refresh problem -->
