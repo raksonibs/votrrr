@@ -1,16 +1,33 @@
 
-app.controller('VoteCtrl', ['votes', '$scope', '$stateParams', function(votes, $scope, $stateParams) {
-  $scope.vote = votes.votes[$stateParams.title]
+app.controller('VoteCtrl', ['Vote', '$scope', '$stateParams', function(Vote, $scope, $stateParams) {
+  $scope.vote = Vote.votes[$stateParams.title]
   $scope.footer = true;
 }])
 
-app.controller('VotesCtrl', ['Vote','Selection','$scope', function(Vote, Selection, $scope) {
+app.controller('VotesCtrl', ['Vote','Selection','$scope', 'socket', function(Vote, Selection, $scope, socket) {
   $scope.votes = Vote.votes
   $scope.footer = true;
 
+  socket.on('casted:vote', function(selection) {
+    // ugly needs to change. udnerscore method
+    for (x in $scope.votes ) {
+      for (y in $scope.votes[x].selections) {
+        if ($scope.votes[x].selections[y].selection_title === selection.selection.selection_title) {
+          $scope.votes[x].selections[y].points += 1;
+        }
+      }
+    }
+  })
+
+  castVote = function(selection) {
+    socket.emit('cast:vote', {
+      selection: selection
+    })
+  }
+
   $scope.upvote = function(vote,selection) {
-    console.log('test')
     Selection.upvote(vote,selection)
+    castVote(selection)
   }
 }])
 
@@ -45,7 +62,7 @@ app.controller('NewVotesCtrl', function(Vote, $scope) {
   
 })
 
-app.controller('MainCtrl', function($scope, $location, Vote) {
+app.controller('MainCtrl', function($scope, $location, Vote, socket) {
   $scope.votes = Vote.getAll()
 
   $scope.footer = false;
