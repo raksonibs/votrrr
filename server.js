@@ -11,6 +11,37 @@ var mongoose = require('mongoose');
 mongoose.connect(config.database);
 require('./server/models/Votes');
 
+//passwordless
+var passwordless = require('passwordless')
+var MongoStore = require('passwordless-mongostore')
+var email = require('emailjs')
+
+var smtpServer = email.server.connect({
+  user: '',
+  password: '',
+  host: 'smtp.gmail.com',
+  ssl: true
+})
+
+var pathToMongoDb = config.database
+
+passwordless.addDelivery(
+  function(tokenToSend, uidToSend, recipient, callback) {
+    var host = 'localhost:3000';
+    smtpServer.send({
+      text:    'Hello!\nAccess your account here: http://'
+      + host + '?token=' + tokenToSend + '&amp;uid='
+      + encodeURIComponent(uidToSend),
+      from:    yourEmail,
+      to:      recipient,
+      subject: 'Token for ' + host
+    }, function(err, message) {
+      if(err) {
+          console.log(err);
+      }
+      callback(err);
+    });
+});
 
 // Routes
 var routes = require('./server/config/routes')(app);
