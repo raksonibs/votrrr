@@ -135,6 +135,45 @@ module.exports = function(app){
     res.status(status).end();
   });
 
+  app.get('/login', function(req, res) {
+    res.render('login');
+  });
+
+  app.post('/sendtoken',
+    function(req, res, next) {
+        // TODO: Input validation
+      },
+    // Turn the email address into a user ID
+    passwordless.requestToken(
+      function(user, delivery, callback) {
+            // E.g. if you have a User model:
+            User.findUser(email, function(error, user) {
+              if(error) {
+                callback(error.toString());
+              } else if(user) {
+                    // return the user ID to Passwordless
+                    callback(null, user.id);
+                  } else {
+                    // If the user couldn’t be found: Create it!
+                    // You can also implement a dedicated route
+                    // to e.g. capture more user details
+                    User.createUser(email, '', '',
+                      function(error, user) {
+                        if(error) {
+                          callback(error.toString());
+                        } else {
+                          callback(null, user.id);
+                        }
+                      })
+                  }
+                })
+          }),
+    function(req, res) {
+        // Success! Tell your users that their token is on its way
+        res.render('sent');
+      }
+    );
+
   //server side route for the angularjs partials
   app.get('/partials/:name', function(req, res){
     // http://expressjs.com/api#router
