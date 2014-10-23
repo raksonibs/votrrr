@@ -18,6 +18,13 @@ SelectionSchema.methods.upvote = function(cb) {
   this.save(cb)
 }
 
+var UserSchema = new mongoose.Schema({
+  username: { type: String, required: true, index: { unique: true } },
+  password: { type: String, required: true }
+});
+
+mongoose.model('User', UserSchema)
+
 // populate method useful to get all Selections associated to Vote
 
 mongoose.model('Selection', SelectionSchema)
