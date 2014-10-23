@@ -130,6 +130,18 @@ module.exports = function(app){
   });
 
   app.use('/api', api);
+
+  app.use(function(req, res, next) {
+    if (req.user) {
+      User.findById(req.user, function(error, user) {
+        res.locals.user = user;
+        next();
+      });
+    } else {
+      next();
+    }
+  })
+
   // not found error for undefined API routes
   app.all('/api/*', function(req, res){
     res.status(status).end();
