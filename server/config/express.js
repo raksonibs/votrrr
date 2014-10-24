@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var logger = require('morgan');
+var flash = require('connect-flash');
 
 module.exports = function(app, config){
 
@@ -21,4 +22,5 @@ module.exports = function(app, config){
   app.use(cookieParser());
   app.use(express.static(path.join(config.rootPath, 'public')));
   app.use(express.static(path.join(config.rootPath, 'bower_components')));
+  app.use(flash());
 }

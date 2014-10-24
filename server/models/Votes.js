@@ -1,4 +1,5 @@
-var mongoose = require('mongoose')
+var mongoose = require('mongoose');
+var bcrypt = require('bcrypt-nodejs');
 
 var SelectionSchema = new mongoose.Schema({
   selection_title: String,
@@ -25,6 +26,15 @@ var UserSchema = new mongoose.Schema({
 
 UserSchema.methods.findUser = function(email, cb) {
   this.findOne({name: new RegExp('^'+name+'$', "i")}, cb )
+};
+
+UserSchema.methods.generateHash = function(password) {
+    return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+};
+
+// checking if password is valid
+UserSchema.methods.validPassword = function(password) {
+    return bcrypt.compareSync(password, this.local.password);
 };
 
 mongoose.model('User', UserSchema)

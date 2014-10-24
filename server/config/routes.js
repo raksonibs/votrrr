@@ -133,7 +133,7 @@ module.exports = function(app){
 
   app.use(function(req, res, next) {
     if (req.user) {
-      User.findById(req.user, function(error, user) {
+      User.findById(req.user._id, function(error, user) {
         res.locals.user = user;
         next();
       });
