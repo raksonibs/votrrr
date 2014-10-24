@@ -20,6 +20,7 @@ require('./server/config/express')(app, config);
 var mongoose = require('mongoose');
 mongoose.connect(config.database);
 require('./server/models/Votes');
+var User = mongoose.model('User');
 
 var options = {
   host: 'localhost',
@@ -72,37 +73,46 @@ app.get('/login', function(req, res) {
 app.post('/sendtoken',
   function(req, res, next) {
       // TODO: Input validation
+      console.log('no validations currently')
+      next()
     },
   // Turn the email address into a user ID
   passwordless.requestToken(
     function(user, delivery, callback) {
-          // E.g. if you have a User model:
-          User.findUser(email, function(error, user) {
-            if(error) {
-              callback(error.toString());
-            } else if(user) {
-                  // return the user ID to Passwordless
-                  callback(null, user.id);
-                } else {
-                  // If the user couldn’t be found: Create it!
-                  // You can also implement a dedicated route
-                  // to e.g. capture more user details
-                  User.createUser(email, '', '',
-                    function(error, user) {
-                      if(error) {
-                        callback(error.toString());
-                      } else {
-                        callback(null, user.id);
-                      }
-                    })
-                }
-              })
-        }),
+      // E.g. if you have a User model:
+      console.log(user)
+      User.findOne({name: new RegExp('^'+user+'$', "i")}, function(error, user) {
+        if (error) {
+          console.log('error')
+          callback(error.toString());
+        } else if(user) {
+          console.log('user')
+            // return the user ID to Passwordless
+          callback(null, user.id);
+        } else {
+          // If the user couldn’t be found: Create it!
+          // You can also implement a dedicated route
+          // to e.g. capture more user details
+          var newUser = new User({
+            email: user
+          })
+          console.log('reached here')
+          newUser.save(function(error, user) {
+            console.log(error)
+              if(error) {
+                callback(error.toString());
+              } else {
+                callback(null, user.id);
+              }
+            })
+        }
+      })
+    }),
   function(req, res) {
       // Success! Tell your users that their token is on its way
       res.render('sent');
     }
-  );
+);
 
 // Routes
 var routes = require('./server/config/routes')(app);

@@ -23,6 +23,10 @@ var UserSchema = new mongoose.Schema({
   password: { type: String, required: true }
 });
 
+UserSchema.methods.findUser = function(email, cb) {
+  this.findOne({name: new RegExp('^'+name+'$', "i")}, cb )
+};
+
 mongoose.model('User', UserSchema)
 
 // populate method useful to get all Selections associated to Vote
