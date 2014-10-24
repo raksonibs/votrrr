@@ -61,7 +61,17 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(expressSession({secret: '42', saveUninitialized: true, resave: true}))
-
+app.use(function(req, res, next) {
+  console.log(req.user)
+  if(req.user) {
+    User.findById(req.user, function(error, user) {
+        res.locals.user = user;
+        next();
+    });
+  } else {
+    next();
+  }
+})
 
 app.use(passwordless.sessionSupport());
 app.use(passwordless.acceptToken({ successRedirect: '/'}));
@@ -70,49 +80,28 @@ app.get('/login', function(req, res) {
   res.render('login');
 });
 
-app.post('/sendtoken',
-  function(req, res, next) {
-      // TODO: Input validation
-      console.log('no validations currently')
-      next()
-    },
-  // Turn the email address into a user ID
+app.post('/sendtoken', 
   passwordless.requestToken(
+    // Simply accept every user
     function(user, delivery, callback) {
-      // E.g. if you have a User model:
-      console.log(user)
-      User.findOne({name: new RegExp('^'+user+'$', "i")}, function(error, user) {
-        if (error) {
-          console.log('error')
-          callback(error.toString());
-        } else if(user) {
-          console.log('user')
-            // return the user ID to Passwordless
-          callback(null, user.id);
-        } else {
-          // If the user couldn’t be found: Create it!
-          // You can also implement a dedicated route
-          // to e.g. capture more user details
-          var newUser = new User({
-            email: user
-          })
-          console.log('reached here')
-          newUser.save(function(error, user) {
-            console.log(error)
-              if(error) {
-                callback(error.toString());
-              } else {
-                callback(null, user.id);
-              }
-            })
-        }
-      })
+      callback(null, user);
+      // usually you would want something like:
+      // User.find({email: user}, callback(ret) {
+      //    if(ret)
+      //      callback(null, ret.id)
+      //    else
+      //      callback(null, null)
+      // })
     }),
   function(req, res) {
-      // Success! Tell your users that their token is on its way
       res.render('sent');
-    }
+  }
 );
+
+app.get('/restricted', passwordless.restricted(),
+    function(req, res) {
+        res.render('restricted', { user: req.user });
+});
 
 // Routes
 var routes = require('./server/config/routes')(app);
